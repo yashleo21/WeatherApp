@@ -1,7 +1,6 @@
 package com.yash2108.weatherapp.di.modules
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.yash2108.openissuesreader.network.service.RetrofitAPI
@@ -24,8 +23,10 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun providesRetrofitClient(okhttpClient: OkHttpClient,
-                               converterFactory: GsonConverterFactory) =
+    fun providesRetrofitClient(
+        okhttpClient: OkHttpClient,
+        converterFactory: GsonConverterFactory
+    ) =
         Retrofit.Builder()
             .client(okhttpClient)
             .baseUrl("http://api.weatherstack.com/")

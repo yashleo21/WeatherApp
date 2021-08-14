@@ -9,8 +9,12 @@ import com.yash2108.weatherapp.database.entitiy.Current
 import com.yash2108.weatherapp.database.entitiy.Location
 import com.yash2108.weatherapp.database.entitiy.Request
 
-@Database(entities = arrayOf(Request::class, Location::class, Current::class), version = 1, exportSchema = true)
-abstract class AppDatabase: RoomDatabase() {
+@Database(
+    entities = arrayOf(Request::class, Location::class, Current::class),
+    version = 1,
+    exportSchema = true
+)
+abstract class AppDatabase : RoomDatabase() {
 
     abstract fun currentDao(): CurrentDao
 

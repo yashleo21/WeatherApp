@@ -11,30 +11,41 @@ import com.yash2108.weatherapp.database.Constants
  */
 
 @Entity(tableName = Constants.WeatherRequestTable)
-data class Request(var type: String?,
-                   @PrimaryKey
-                   var query: String,
-                   var language: String?,
-                   var unit: String?)
+data class Request(
+    var type: String?,
+    @PrimaryKey
+    var query: String,
+    var language: String?,
+    var unit: String?
+)
 
-@Entity(tableName = Constants.WeatherLocationTable, foreignKeys = arrayOf(
-    ForeignKey(entity = Request::class,
-        parentColumns = arrayOf("query"),
-        childColumns = arrayOf("query"),
-        onDelete = ForeignKey.CASCADE)
-))
+@Entity(
+    tableName = Constants.WeatherLocationTable, foreignKeys = arrayOf(
+        ForeignKey(
+            entity = Request::class,
+            parentColumns = arrayOf("query"),
+            childColumns = arrayOf("query"),
+            onDelete = ForeignKey.CASCADE
+        )
+    )
+)
 data class Location(
     @PrimaryKey
     var query: String,
     var name: String?,
-    var country: String?)
+    var country: String?
+)
 
-@Entity(tableName = Constants.WeatherCurrentTable, foreignKeys = arrayOf(
-    ForeignKey(entity = Location::class,
-        parentColumns = arrayOf("query"),
-        childColumns = arrayOf("query"),
-        onDelete = ForeignKey.CASCADE)
-))
+@Entity(
+    tableName = Constants.WeatherCurrentTable, foreignKeys = arrayOf(
+        ForeignKey(
+            entity = Location::class,
+            parentColumns = arrayOf("query"),
+            childColumns = arrayOf("query"),
+            onDelete = ForeignKey.CASCADE
+        )
+    )
+)
 data class Current(
     @PrimaryKey
     var query: String,

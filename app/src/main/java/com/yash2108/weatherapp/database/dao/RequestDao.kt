@@ -5,7 +5,6 @@ import androidx.room.*
 import com.yash2108.weatherapp.database.Constants
 import com.yash2108.weatherapp.database.entitiy.Request
 import com.yash2108.weatherapp.models.WeatherResponse
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RequestDao {

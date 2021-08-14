@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class HomeViewModel: ViewModel() {
+class HomeViewModel : ViewModel() {
 
     private val TAG = HomeViewModel::class.java.simpleName
 
@@ -21,7 +21,8 @@ class HomeViewModel: ViewModel() {
     @Inject
     lateinit var repository: HomeRepository
 
-    private var homeDataMutableLiveData: MutableLiveData<ResultUI<List<WeatherResponse>>> = MutableLiveData()
+    private var homeDataMutableLiveData: MutableLiveData<ResultUI<List<WeatherResponse>>> =
+        MutableLiveData()
     val homeDataLiveData get(): LiveData<ResultUI<List<WeatherResponse>>> = homeDataMutableLiveData
 
     fun fetchWeatherInfo(query: String) = viewModelScope.launch {
@@ -39,10 +40,30 @@ class HomeViewModel: ViewModel() {
     fun prepareAdapterList(data: WeatherResponse) {
         adapterList.clear()
         //
-        adapterList.add(AdapterObject("Wind Speed", data.locationWithCurrentData?.current?.wind_speed ?: ""))
-        adapterList.add(AdapterObject("Pressure", data.locationWithCurrentData?.current?.pressure ?: ""))
-        adapterList.add(AdapterObject("Precip", data.locationWithCurrentData?.current?.precip ?: ""))
-        adapterList.add(AdapterObject("Cloud Cover", data.locationWithCurrentData?.current?.cloudcover ?: ""))
+        adapterList.add(
+            AdapterObject(
+                "Wind Speed",
+                data.locationWithCurrentData?.current?.wind_speed ?: ""
+            )
+        )
+        adapterList.add(
+            AdapterObject(
+                "Pressure",
+                data.locationWithCurrentData?.current?.pressure ?: ""
+            )
+        )
+        adapterList.add(
+            AdapterObject(
+                "Precip",
+                data.locationWithCurrentData?.current?.precip ?: ""
+            )
+        )
+        adapterList.add(
+            AdapterObject(
+                "Cloud Cover",
+                data.locationWithCurrentData?.current?.cloudcover ?: ""
+            )
+        )
     }
 
 }

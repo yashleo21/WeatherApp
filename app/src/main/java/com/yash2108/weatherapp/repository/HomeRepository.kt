@@ -4,13 +4,14 @@ import android.util.Log
 import com.yash2108.openissuesreader.ui.di.scopes.ActivityScoped
 import com.yash2108.weatherapp.models.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import javax.sql.DataSource
 
 @ActivityScoped
-class HomeRepository @Inject constructor(private val local: LocalDataSource, private val remote: RemoteDataSource) {
+class HomeRepository @Inject constructor(
+    private val local: LocalDataSource,
+    private val remote: RemoteDataSource
+) {
 
     private val TAG = HomeRepository::class.java.simpleName
 

@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="16dp"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:paddingTop="16dp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        tools:text="Wind Speed"
-        android:textSize="18sp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:textColor="@color/black"/>
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        tools:text="Wind Speed" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        tools:text="0"
-        android:textSize="18sp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:textColor="@color/black"/>
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        tools:text="0" />
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#7b7b7c"
-        android:layout_below="@id/tv_title"/>
+        android:layout_below="@id/tv_title"
+        android:background="#7b7b7c" />
 
 </RelativeLayout>

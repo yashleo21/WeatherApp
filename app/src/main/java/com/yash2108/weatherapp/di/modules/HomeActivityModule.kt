@@ -11,7 +11,8 @@ class HomeActivityModule {
 
     @ActivityScoped
     @Provides
-    fun providesFusedLocationClient(context: Context) = LocationServices.getFusedLocationProviderClient(context)
+    fun providesFusedLocationClient(context: Context) =
+        LocationServices.getFusedLocationProviderClient(context)
 
 
 }

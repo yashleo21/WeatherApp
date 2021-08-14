@@ -5,7 +5,6 @@ import com.yash2108.openissuesreader.ui.di.scopes.ActivityScoped
 import com.yash2108.weatherapp.HomeViewModel
 import com.yash2108.weatherapp.MainActivity
 import com.yash2108.weatherapp.di.modules.HomeActivityModule
-import dagger.Binds
 import dagger.BindsInstance
 import dagger.Subcomponent
 

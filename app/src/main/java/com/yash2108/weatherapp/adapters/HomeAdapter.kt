@@ -10,17 +10,25 @@ import com.yash2108.weatherapp.databinding.LayoutWeatherInfoItemBinding
 import com.yash2108.weatherapp.models.AdapterObject
 import javax.inject.Inject
 
-class HomeAdapter @Inject constructor(): ListAdapter<AdapterObject, HomeAdapter.ViewHolder>(HomeAdapterDiffUtil()) {
+class HomeAdapter @Inject constructor() :
+    ListAdapter<AdapterObject, HomeAdapter.ViewHolder>(HomeAdapterDiffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutWeatherInfoItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(
+            LayoutWeatherInfoItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         return holder.bindView(getItem(position), position)
     }
 
-    inner class ViewHolder(val binding: LayoutWeatherInfoItemBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: LayoutWeatherInfoItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bindView(data: AdapterObject, position: Int) {
             binding.tvTitle.text = data.title
@@ -32,7 +40,7 @@ class HomeAdapter @Inject constructor(): ListAdapter<AdapterObject, HomeAdapter.
     }
 
 
-    class HomeAdapterDiffUtil(): DiffUtil.ItemCallback<AdapterObject>() {
+    class HomeAdapterDiffUtil() : DiffUtil.ItemCallback<AdapterObject>() {
 
         override fun areItemsTheSame(oldItem: AdapterObject, newItem: AdapterObject): Boolean {
             return oldItem.title == newItem.title

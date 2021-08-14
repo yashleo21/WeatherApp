@@ -9,7 +9,13 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(NetworkModule::class, DatabaseModule::class, SubcomponentsModule::class))
+@Component(
+    modules = arrayOf(
+        NetworkModule::class,
+        DatabaseModule::class,
+        SubcomponentsModule::class
+    )
+)
 interface ApplicationComponent {
 
 

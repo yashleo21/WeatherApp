@@ -5,15 +5,16 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.yash2108.weatherapp.adapters.HomeAdapter
 import com.yash2108.weatherapp.application.MyApplication
@@ -22,21 +23,6 @@ import com.yash2108.weatherapp.di.components.HomeActivityComponent
 import com.yash2108.weatherapp.models.ResultUI
 import com.yash2108.weatherapp.models.WeatherResponse
 import javax.inject.Inject
-import android.content.IntentSender
-import android.content.IntentSender.SendIntentException
-
-import com.google.android.gms.common.api.ResolvableApiException
-
-import com.google.android.gms.location.LocationSettingsResponse
-
-import com.google.android.gms.location.LocationServices
-
-import com.google.android.gms.location.LocationSettingsRequest
-
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
-import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
@@ -57,7 +43,8 @@ class MainActivity : AppCompatActivity() {
 
     private val activityResultLauncher =
         registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
             var allPermissionsGranted = true
             permissions.entries.forEach {
                 Log.d(TAG, "${it.key} = ${it.value}")
@@ -80,7 +67,8 @@ class MainActivity : AppCompatActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        activityComponent = (application as MyApplication).appComponent.homeActivityComponent().create(this)
+        activityComponent =
+            (application as MyApplication).appComponent.homeActivityComponent().create(this)
         activityComponent.inject(this)
 
         super.onCreate(savedInstanceState)
@@ -133,7 +121,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkLocationPermission() {
-        activityResultLauncher.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
+        activityResultLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        )
     }
 
     private fun getLastKnownLocation() {
@@ -165,7 +158,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Unable to receive last known location", Toast.LENGTH_LONG).show()
             return
         }
-       viewModel.fetchWeatherInfo(if (location != null)"${location?.latitude},${location?.longitude}" else "noida")
+        viewModel.fetchWeatherInfo(if (location != null) "${location?.latitude},${location?.longitude}" else "noida")
     }
 
     private fun requestNewLocation() {
@@ -177,7 +170,7 @@ class MainActivity : AppCompatActivity() {
         val builder = LocationSettingsRequest.Builder()
             .addLocationRequest(locationRequest)
 
-        val locationCallback = object: LocationCallback() {
+        val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult?.locations?.elementAtOrNull(0)?.let {
                     Log.d(TAG, "New location received: $it")
@@ -236,7 +229,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (REQUEST_CODE_CHECK_SETTINGS == requestCode) {
-            if(Activity.RESULT_OK == resultCode){
+            if (Activity.RESULT_OK == resultCode) {
                 requestNewLocation()
             } else {
                 binding.layoutError.layoutError.visibility = View.VISIBLE
