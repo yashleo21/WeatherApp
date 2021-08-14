@@ -19,4 +19,8 @@ interface RequestDao {
     @Transaction
     @Query("SELECT * from ${Constants.WeatherRequestTable}")
     fun getData(): LiveData<List<WeatherResponse>>
+
+    @Transaction
+    @Query("SELECT * from ${Constants.WeatherRequestTable}")
+    suspend fun getInitialData(): List<WeatherResponse>
 }

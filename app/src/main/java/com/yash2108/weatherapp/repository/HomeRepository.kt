@@ -23,6 +23,7 @@ class HomeRepository @Inject constructor(private val local: LocalDataSource, pri
             is Result.Success -> {
                 Log.d(TAG, "Success, inserting")
                 local.insertNewData(response.data)
+                emit(ResultUI.success(local.getInitialData()))
             }
 
             is Result.Error -> {
@@ -32,5 +33,7 @@ class HomeRepository @Inject constructor(private val local: LocalDataSource, pri
         }
     }
 
-    fun getDatabaseSource() =  local.getData()
+    suspend fun getInitialData(): Flow<ResultUI<List<WeatherResponse>>> = flow {
+        emit(ResultUI.success(local.getInitialData()))
+    }
 }
