@@ -12,7 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
-import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.*
 import com.yash2108.weatherapp.adapters.HomeAdapter
 import com.yash2108.weatherapp.application.MyApplication
 import com.yash2108.weatherapp.databinding.ActivityMainBinding
@@ -54,10 +54,10 @@ class MainActivity : AppCompatActivity() {
                 getLastKnownLocation()
             } else {
                 // Permission is denied
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT)
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG)
+                binding.layoutError.layoutError.visibility = View.VISIBLE
             }
         }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         activityComponent = (application as MyApplication).appComponent.homeActivityComponent().create(this)
@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         activityComponent.inject(viewModel)
         initAdapter()
         initObservers()
+        initListeners()
        // fetchInitialData()
         checkLocationPermission()
     }
@@ -85,20 +86,30 @@ class MainActivity : AppCompatActivity() {
             is ResultUI.Loading -> {
                 //Show progress
                 binding.rlProgress.visibility = View.VISIBLE
+                binding.layoutError.layoutError.visibility = View.GONE
             }
 
             is ResultUI.Error -> {
                 //Show Error
                 binding.rlProgress.visibility = View.GONE
+                binding.layoutError.layoutError.visibility = View.VISIBLE
             }
 
             is ResultUI.Success -> {
                 //Show Success
                 updateUI(state.data)
                 updateAdapter(state.data)
+                binding.layoutError.layoutError.visibility = View.GONE
                 binding.rlProgress.visibility = View.GONE
                 binding.llContent.visibility = View.VISIBLE
             }
+        }
+    }
+
+    private fun initListeners() {
+        binding.layoutError.btnRetry.setOnClickListener {
+            binding.layoutError.layoutError.visibility = View.GONE
+            checkLocationPermission()
         }
     }
 
@@ -119,7 +130,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         fusedLocationClient.lastLocation?.addOnSuccessListener {
-            Log.d(TAG, "Location object: ${it.latitude}")
+            Log.d(TAG, "Location object: ${it?.latitude}")
             fetchData(it)
         }
     }
