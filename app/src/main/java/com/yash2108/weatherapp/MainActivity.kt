@@ -1,6 +1,8 @@
 package com.yash2108.weatherapp
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
@@ -20,10 +22,27 @@ import com.yash2108.weatherapp.di.components.HomeActivityComponent
 import com.yash2108.weatherapp.models.ResultUI
 import com.yash2108.weatherapp.models.WeatherResponse
 import javax.inject.Inject
+import android.content.IntentSender
+import android.content.IntentSender.SendIntentException
+
+import com.google.android.gms.common.api.ResolvableApiException
+
+import com.google.android.gms.location.LocationSettingsResponse
+
+import com.google.android.gms.location.LocationServices
+
+import com.google.android.gms.location.LocationSettingsRequest
+
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import java.lang.Exception
+
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = MainActivity::class.java.simpleName
+    private val REQUEST_CODE_CHECK_SETTINGS = 111
 
     private val viewModel by viewModels<HomeViewModel>()
     lateinit var activityComponent: HomeActivityComponent
@@ -54,8 +73,9 @@ class MainActivity : AppCompatActivity() {
                 getLastKnownLocation()
             } else {
                 // Permission is denied
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG)
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
                 binding.layoutError.layoutError.visibility = View.VISIBLE
+                checkLocationPermission()
             }
         }
 
@@ -71,8 +91,7 @@ class MainActivity : AppCompatActivity() {
         initAdapter()
         initObservers()
         initListeners()
-       // fetchInitialData()
-        checkLocationPermission()
+        getLastKnownLocation()
     }
 
     private fun initObservers() {
@@ -127,20 +146,73 @@ class MainActivity : AppCompatActivity() {
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             Log.d(TAG, "No permission")
+            checkLocationPermission()
             return
         }
         fusedLocationClient.lastLocation?.addOnSuccessListener {
+            if (it == null) {
+                Log.d(TAG, "Null last known location, requesting new locaiton")
+                requestNewLocation()
+                return@addOnSuccessListener
+            }
             Log.d(TAG, "Location object: ${it?.latitude}")
             fetchData(it)
         }
     }
 
     private fun fetchData(location: Location?) {
+        if (location == null) {
+            Toast.makeText(this, "Unable to receive last known location", Toast.LENGTH_LONG).show()
+            return
+        }
        viewModel.fetchWeatherInfo(if (location != null)"${location?.latitude},${location?.longitude}" else "noida")
     }
 
-    private fun fetchInitialData() {
-        viewModel.fetchInitialData()
+    private fun requestNewLocation() {
+        val locationRequest = LocationRequest.create()
+        locationRequest.interval = 60000
+        locationRequest.fastestInterval = 5000
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+
+        val locationCallback = object: LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                locationResult?.locations?.elementAtOrNull(0)?.let {
+                    Log.d(TAG, "New location received: $it")
+                    fusedLocationClient.removeLocationUpdates(this)
+                    fetchData(it)
+                }
+            }
+        }
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            checkLocationPermission()
+            return
+        }
+
+        LocationServices
+            .getSettingsClient(this)
+            .checkLocationSettings(builder.build())
+            .addOnSuccessListener {
+                fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+            }
+            .addOnFailureListener {
+                if (it is ResolvableApiException) {
+                    try {
+                        it.startResolutionForResult(this, REQUEST_CODE_CHECK_SETTINGS)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
     }
 
     private fun updateUI(data: List<WeatherResponse>) {
@@ -161,4 +233,15 @@ class MainActivity : AppCompatActivity() {
         binding.rvItems.adapter = adapter
     }
 
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (REQUEST_CODE_CHECK_SETTINGS == requestCode) {
+            if(Activity.RESULT_OK == resultCode){
+                requestNewLocation()
+            } else {
+                binding.layoutError.layoutError.visibility = View.VISIBLE
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 }
