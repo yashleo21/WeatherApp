@@ -1,11 +1,18 @@
 package com.yash2108.weatherapp
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.yash2108.weatherapp.adapters.HomeAdapter
 import com.yash2108.weatherapp.application.MyApplication
 import com.yash2108.weatherapp.databinding.ActivityMainBinding
@@ -26,8 +33,34 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var adapter: HomeAdapter
 
+    @Inject
+    lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private val activityResultLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            var allPermissionsGranted = true
+            permissions.entries.forEach {
+                Log.d(TAG, "${it.key} = ${it.value}")
+                if (it.value == false) {
+                    allPermissionsGranted = false
+                    return@forEach
+                }
+            }
+            // Handle Permission granted/rejected
+            if (allPermissionsGranted) {
+                // Permission is granted
+                Log.d(TAG, "Permission granted")
+                getLastKnownLocation()
+            } else {
+                // Permission is denied
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT)
+            }
+        }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        activityComponent = (application as MyApplication).appComponent.homeActivityComponent().create()
+        activityComponent = (application as MyApplication).appComponent.homeActivityComponent().create(this)
         activityComponent.inject(this)
 
         super.onCreate(savedInstanceState)
@@ -37,8 +70,8 @@ class MainActivity : AppCompatActivity() {
         activityComponent.inject(viewModel)
         initAdapter()
         initObservers()
-        fetchInitialData()
-        fetchData()
+       // fetchInitialData()
+        checkLocationPermission()
     }
 
     private fun initObservers() {
@@ -69,8 +102,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchData() {
-       viewModel.fetchWeatherInfo("noida")
+    private fun checkLocationPermission() {
+        activityResultLauncher.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
+    }
+
+    private fun getLastKnownLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d(TAG, "No permission")
+            return
+        }
+        fusedLocationClient.lastLocation?.addOnSuccessListener {
+            Log.d(TAG, "Location object: ${it.latitude}")
+            fetchData(it)
+        }
+    }
+
+    private fun fetchData(location: Location?) {
+       viewModel.fetchWeatherInfo(if (location != null)"${location?.latitude},${location?.longitude}" else "noida")
     }
 
     private fun fetchInitialData() {
