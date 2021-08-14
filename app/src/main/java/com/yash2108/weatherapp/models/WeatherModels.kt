@@ -39,11 +39,11 @@ data class WeatherCurrent(var observation_time: String?,
 data class WeatherResponse(
     @Embedded val request: Request,
     @Relation(entity = Location::class, parentColumn = "query", entityColumn = "query")
-    val locationWithCurrentData: LocationWithCurrentData
+    val locationWithCurrentData: LocationWithCurrentData?
 )
 
 data class LocationWithCurrentData(
     @Embedded val location: Location,
     @Relation(parentColumn = "query", entityColumn = "query")
-    val current: Current
+    val current: Current?
 )

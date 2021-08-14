@@ -13,7 +13,7 @@ interface RequestDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(data: Request)
 
-    @Delete
+    @Query("DELETE FROM ${Constants.WeatherRequestTable}")
     suspend fun deleteAll()
 
     @Transaction

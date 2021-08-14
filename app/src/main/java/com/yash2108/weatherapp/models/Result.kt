@@ -9,7 +9,7 @@ sealed class Result<out T>() {
     class Error(val error: Throwable): Result<Nothing>()
 
     companion object {
-        fun loading(): Result<Nothing> = Result.Loading()
+        fun loading(): Result<Nothing> = Loading()
         fun <T> success(data: T): Result<T> = Success(data)
         fun error(error: Throwable): Result<Nothing> = Error(error)
     }

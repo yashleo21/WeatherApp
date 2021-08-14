@@ -1,6 +1,7 @@
 package com.yash2108.weatherapp.models
 
 import androidx.lifecycle.LiveData
+import com.yash2108.openissuesreader.ui.di.scopes.ActivityScoped
 import com.yash2108.weatherapp.database.dao.CurrentDao
 import com.yash2108.weatherapp.database.dao.LocationDao
 import com.yash2108.weatherapp.database.dao.RequestDao
@@ -10,6 +11,7 @@ import com.yash2108.weatherapp.database.entitiy.Request
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+@ActivityScoped
 class LocalDataSource @Inject constructor(val requestDao: RequestDao,
                                           val locationDao: LocationDao,
                                           val currentDao: CurrentDao) {
