@@ -2,12 +2,15 @@ package com.yash2108.weatherapp.models
 
 sealed class Result<out T>() {
 
-    class Success<T>(data: T): Result<T>()
+    class Loading: Result<Nothing>()
 
-    class Error(error: Throwable): Result<Throwable>()
+    class Success<T>(val data: T): Result<T>()
+
+    class Error(val error: Throwable): Result<Nothing>()
 
     companion object {
+        fun loading(): Result<Nothing> = Result.Loading()
         fun <T> success(data: T): Result<T> = Success(data)
-        fun error(error: Throwable): Result<Throwable> = Error(error)
+        fun error(error: Throwable): Result<Nothing> = Error(error)
     }
 }

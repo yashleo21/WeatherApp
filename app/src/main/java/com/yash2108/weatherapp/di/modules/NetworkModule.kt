@@ -28,7 +28,7 @@ class NetworkModule {
                                converterFactory: GsonConverterFactory) =
         Retrofit.Builder()
             .client(okhttpClient)
-            .baseUrl("https://api.github.com/")
+            .baseUrl("https://api.weatherstack.com/")
             .addConverterFactory(converterFactory)
             .build()
 

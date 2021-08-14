@@ -1,10 +1,11 @@
 package com.yash2108.weatherapp.database.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import androidx.lifecycle.LiveData
+import androidx.room.*
+import com.yash2108.weatherapp.database.Constants
 import com.yash2108.weatherapp.database.entitiy.Request
+import com.yash2108.weatherapp.models.WeatherResponse
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RequestDao {
@@ -14,4 +15,8 @@ interface RequestDao {
 
     @Delete
     suspend fun deleteAll()
+
+    @Transaction
+    @Query("SELECT * from ${Constants.WeatherRequestTable}")
+    fun getData(): LiveData<List<WeatherResponse>>
 }

@@ -1,6 +1,11 @@
 package com.yash2108.weatherapp.models
 
+import androidx.room.Embedded
+import androidx.room.Relation
 import com.google.gson.annotations.SerializedName
+import com.yash2108.weatherapp.database.entitiy.Current
+import com.yash2108.weatherapp.database.entitiy.Location
+import com.yash2108.weatherapp.database.entitiy.Request
 
 data class WeatherContainer(var request: WeatherRequest?,
                             var location: WeatherLocation?,
@@ -30,3 +35,15 @@ data class WeatherCurrent(var observation_time: String?,
                           var uv_index: String?,
                           var visibility: String?,
                           var is_day: String?)
+
+data class WeatherResponse(
+    @Embedded val request: Request,
+    @Relation(entity = Location::class, parentColumn = "query", entityColumn = "query")
+    val locationWithCurrentData: LocationWithCurrentData
+)
+
+data class LocationWithCurrentData(
+    @Embedded val location: Location,
+    @Relation(parentColumn = "query", entityColumn = "query")
+    val current: Current
+)

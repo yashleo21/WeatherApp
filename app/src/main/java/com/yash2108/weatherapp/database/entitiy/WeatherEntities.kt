@@ -24,25 +24,21 @@ data class Request(var type: String?,
         onDelete = ForeignKey.CASCADE)
 ))
 data class Location(
+    @PrimaryKey
     var query: String,
     var name: String?,
-    var country: String?,
-    @PrimaryKey
-    var lat: String?,
-    @PrimaryKey
-    var lon: String?)
+    var country: String?)
 
 @Entity(tableName = Constants.WeatherCurrentTable, foreignKeys = arrayOf(
     ForeignKey(entity = Location::class,
-        parentColumns = arrayOf("lat", "lon"),
-        childColumns = arrayOf("lat", "lon"),
+        parentColumns = arrayOf("query"),
+        childColumns = arrayOf("query"),
         onDelete = ForeignKey.CASCADE)
 ))
 data class Current(
     @PrimaryKey
-    var weather_code: String,
-    var lat: String?,
-    var lon: String?,
+    var query: String,
+    var weather_code: String?,
     var observation_time: String?,
     var temperature: String?,
     var wind_speed: String?,
